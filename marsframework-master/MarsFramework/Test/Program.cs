@@ -32,7 +32,6 @@ namespace MarsFramework
                 bs.Inititalize();
                 ShareSkill sSkill = new ShareSkill();
                 sSkill.EnterShareSkill();
-                Thread.Sleep(3000);
                 bs.TearDown();
             }
 

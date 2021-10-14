@@ -85,8 +85,8 @@ namespace MarsFramework.Pages
             //Populate the excel data
             GlobalDefinitions.ExcelLib.PopulateInCollection(@"D:\Internship\Sprint2\marsframework-master\MarsFramework\ExcelData\TestData.xlsx", "SignUp");
 
-            //Click on Join button
-            Join.Click();
+            //Click on Join button - Yet to write the correct xpath when the new user tries to logs in and fails
+            
 
             //Enter FirstName
             FirstName.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "FirstName"));

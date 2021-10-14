@@ -174,13 +174,14 @@ namespace MarsFramework.Pages
 
         public void ValidateMsgForSharingSkill()
         {
-            try { 
-            String ActualMsg_ListingAdded = GlobalDefinitions.driver.FindElement(By.XPath(
+            try
+            { 
+                var ActualMsg_ListingAdded = GlobalDefinitions.driver.FindElement(By.XPath(
                 "//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
-            String ExpectedMsg = "Service Listing Added successfully";
-            Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
-            Console.WriteLine("Actual message is : " + ActualMsg_ListingAdded);
-            }catch(StaleElementReferenceException sere)
+                Console.WriteLine("Actual message is : " + ActualMsg_ListingAdded);
+                var ExpectedMsg = "Service Listing Added successfully";
+                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
+            }   catch(StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);
             }
@@ -243,16 +244,13 @@ namespace MarsFramework.Pages
             SkillExchange.SendKeys("Cypress");
             SkillExchange.SendKeys(Keys.Enter);
             gd.PageScrollDown();
-            //System.Threading.Thread.Sleep(3000);
             //hiddenOption.Click();
-            //System.Threading.Thread.Sleep(3000);
             //uploadFileBtn.Click();
             //AutoItX3 autoIT = new AutoItX3();
             //autoIT.WinActivate("Open");
             Save.Click();
-            Thread.Sleep(5000);
-            //ValidateMsgForListingUpdate();
-            //Thread.Sleep(4000);
+            ValidateMsgForListingUpdate();
+            Thread.Sleep(4000);
         }
 
         public void ValidateMsgForListingUpdate()
