@@ -61,13 +61,21 @@ namespace MarsFramework.Pages
 
         public void ValidateMsgForListingsRemoval()
         {
-            try { 
-            String ActualMsg_ListingRemoval = GlobalDefinitions.driver.FindElement(By.XPath(
+            try
+            { 
+                var ActualMsg_ListingRemoval = GlobalDefinitions.driver.FindElement(By.XPath(
                 "//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
-            //String ExpectedMsg = "Selenium has been deleted";
-            String ExpectedMsg = "";
-            Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
-            Console.WriteLine("Actual message is : " + ActualMsg_ListingRemoval);
+                Console.WriteLine("Actual message is : " + ActualMsg_ListingRemoval);
+                var ExpectedMsg = "Selenium has been deleted";
+                //var NoMessage = string.Empty;
+                var nomessage = "";
+                Thread.Sleep(4000);
+                if (ExpectedMsg == "Selenium has been deleted" /*|| NoMessage == string.Empty*/ || nomessage == "")
+                {
+                    Console.WriteLine("Either condition from above is passed");
+                }
+                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
+                
             }catch(StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);
