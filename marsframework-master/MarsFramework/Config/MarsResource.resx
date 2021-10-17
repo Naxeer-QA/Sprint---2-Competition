@@ -129,12 +129,12 @@
     <comment>If true Login, else Register</comment>
   </data>
   <data name="ReportPath" xml:space="preserve">
-    <value>your path</value>
+    <value>D:\MVP_Tasks_15_Sep_2021\marsframework-master\marsframework-master\MarsFramework\TestReports\MarsReports.html</value>
   </data>
   <data name="ReportXMLPath" xml:space="preserve">
-    <value>your path</value>
+    <value>D:\MVP_Tasks_15_Sep_2021\marsframework-master\marsframework-master\MarsFramework\TestReports\XMLFile.xml</value>
   </data>
   <data name="ScreenShotPath" xml:space="preserve">
-    <value>your path</value>
+    <value>D:\MVP_Tasks_15_Sep_2021\marsframework-master\marsframework-master\MarsFramework\TestReports\Screenshots\</value>
   </data>
 </root>

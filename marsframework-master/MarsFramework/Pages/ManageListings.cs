@@ -74,19 +74,21 @@ namespace MarsFramework.Pages
                 {
                     Console.WriteLine("Either condition from above is passed");
                 }
-                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
+                Assert.That(ActualMsg_ListingRemoval, Is.EqualTo(ExpectedMsg));
+                //Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
                 
-            }catch(StaleElementReferenceException sere)
+            }   catch(StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);
             }
             
         }
-
         public void EditListings()
         {
             Thread.Sleep(4000);
             manageListingsLink.Click();
+            GlobalDefinitions gd = new GlobalDefinitions();
+            gd.waitUntilClickable(GlobalDefinitions.driver, editListings);
             editListings.Click();
             Thread.Sleep(4000);
         }

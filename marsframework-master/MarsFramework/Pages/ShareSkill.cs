@@ -6,6 +6,8 @@ using MarsFramework.Global;
 using System;
 using NUnit.Framework;
 using System.Threading;
+using System.Collections.Generic;
+using AutoItX3Lib;
 
 namespace MarsFramework.Pages
 {
@@ -108,12 +110,12 @@ namespace MarsFramework.Pages
         private IWebElement CreditAmount { get; set; }
 
         //Click on Active/Hidden option
-        [FindsBy(How = How.XPath, Using = "//form/div[10]/div[@class='twelve wide column']/div/div[@class = 'field']")]
+        [FindsBy(How = How.XPath, Using = "//div[10]//div[2]//div[1]//div[1]//div[1]//input[1]")]
         private IWebElement ActiveOption { get; set; }
 
         //Click on Hidden option
-        //[FindsBy(How = How.XPath, Using = "//form/div[10]/div[@class='twelve wide column']/div/div[@class = 'field']//label[text()='Hidden']")]
-        [FindsBy(How = How.XPath, Using = "//label[text()='Hidden']")]
+        [FindsBy(How = How.XPath, Using = "//div[10]//div[2]//div[1]//div[2]//div[1]//input[1]")]
+        //[FindsBy(How = How.XPath, Using = "//label[text()='Hidden']")]
         public IWebElement hiddenOption { get; set; }
 
         //Upload file button
@@ -127,30 +129,44 @@ namespace MarsFramework.Pages
         #endregion
         internal void EnterShareSkill()
         {
+            GlobalDefinitions.ExcelLib.PopulateInCollection(@"D:\MVP_Tasks_15_Sep_2021\marsframework-master\marsframework-master\MarsFramework\ExcelData\TestDataShareSkill.xlsx", "ShareSkill");
             ShareSkillButton.Click();
-            Title.SendKeys("Automation");
-            Description.SendKeys("Hi Team, I am automation tester");
+            Title.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Title"));
+            Description.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Description"));
             SelectElement se = new SelectElement(CategoryDropDown);
-            se.SelectByText("Programming & Tech");
+            se.SelectByText(GlobalDefinitions.ExcelLib.ReadData(2, "Category"));
             SelectElement sElement = new SelectElement(SubCategoryDropDown);
-            sElement.SelectByIndex(4);
+            sElement.SelectByText(GlobalDefinitions.ExcelLib.ReadData(2, "SubCategory"));
             GlobalDefinitions gd = new GlobalDefinitions();
             gd.PageScrollDown();
-            Tags.SendKeys("Selenium Automation");
+            Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Tags"));
             Tags.SendKeys(Keys.Enter);
-            Tags.SendKeys("API Automation using Postman");
+            Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(3, "Tags"));
             Tags.SendKeys(Keys.Enter);
             gd.PageScrollDown();
             EnterAvailabileDays();
+            ExchangeSkills();
+            uploadFileBtn.Click();
+            AutoItX3 autoIT = new AutoItX3();
+            autoIT.WinActivate("Open");
+            Thread.Sleep(2000);
+            autoIT.Send(@"C:\Users\Admin\Desktop\IC_DummyFile.txt");
+            Thread.Sleep(2000);
+            autoIT.Send("{Enter}");
             gd.PageScrollDown();
-            SkillTradeOption_Credit.Click();
-            CreditAmount.SendKeys("4");
-            //uploadFileBtn.Click();
-            //AutoItX3 autoIT = new AutoItX3();
-            //autoIT.WinActivate("Open");
+            Actions action = new Actions(GlobalDefinitions.driver);
+            action.MoveToElement(hiddenOption);
+            if(GlobalDefinitions.ExcelLib.ReadData(2, "Active") != "Hidden")
+            {
+                ActiveOption.Click();
+            }
+            else
+            {
+                hiddenOption.Click();
+            }
             Save.Click();
             ValidateMsgForSharingSkill();
-            Thread.Sleep(4000);
+            //Thread.Sleep(4000);
 
             #region 
             //int logoWidth = StartDateDropDown.Size.Width;
@@ -180,7 +196,15 @@ namespace MarsFramework.Pages
                 "//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
                 Console.WriteLine("Actual message is : " + ActualMsg_ListingAdded);
                 var ExpectedMsg = "Service Listing Added successfully";
-                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
+                //var NoMessage = string.Empty;
+                var nomessage = "";
+                Thread.Sleep(4000);
+                if (ExpectedMsg == "Selenium has been deleted" /*|| NoMessage == string.Empty*/ || nomessage == "")
+                {
+                    Console.WriteLine("Either condition from above is passed");
+                }
+                Assert.That(ActualMsg_ListingAdded, Is.EqualTo(ExpectedMsg));
+                //Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
             }   catch(StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);
@@ -190,30 +214,88 @@ namespace MarsFramework.Pages
 
         public void EnterAvailabileDays()
         {
-            Actions action = new Actions(GlobalDefinitions.driver);
-            StartDateDropDown.Click();
-            action.SendKeys(Keys.Space).Perform();
-            action.SendKeys(Keys.Tab);
-            action.SendKeys(Keys.Space).Perform();
-            System.Threading.Thread.Sleep(3000);
-            action.SendKeys(Keys.Space).Perform();
-            action.SendKeys(Keys.Tab);
-            action.SendKeys(Keys.Tab);
-            action.SendKeys(Keys.Space).Perform();
-            EndDateDropDown.SendKeys("10/10/2022");
-            EndDateDropDown.Click();
-            IWebElement Day1 = GlobalDefinitions.driver.FindElement(By.XPath("//input[@name = 'Available'][@index = 1]"));
-            Day1.Click();
-            StartTimeDropDown.SendKeys("10:00 AM");
-            EndTimeDropDown.SendKeys("11:00 AM");
-            EndTimeDropDown.SendKeys(Keys.Enter);
-            IWebElement Day2 = GlobalDefinitions.driver.FindElement(By.XPath("//input[@name = 'Available'][@index = 2]"));
-            Day2.Click();
-            IWebElement time2 = GlobalDefinitions.driver.FindElement(By.XPath("//input[@name = 'StartTime'][@index = '2']"));
-            time2.SendKeys("10:00 AM");
-            IWebElement endTime2 = GlobalDefinitions.driver.FindElement(By.XPath("//input[@name = 'EndTime'][@index = '2']"));
-            endTime2.SendKeys("11:00 AM");
-            endTime2.SendKeys(Keys.Enter);
+            GlobalDefinitions.ExcelLib.PopulateInCollection(@"D:\MVP_Tasks_15_Sep_2021\marsframework-master\marsframework-master\MarsFramework\ExcelData\TestDataShareSkill.xlsx", "ShareSkill");
+            StartDateDropDown.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Startdate"));
+            EndDateDropDown.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Enddate"));
+            switch(GlobalDefinitions.ExcelLib.ReadData(2, "Selectday"))
+            {
+                case "Sun":
+                    IWebElement checkSunday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[2]//div[1]//div[1]/input[@name = 'Available']"));
+                    checkSunday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[2]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[2]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+
+                case "Mon":
+                    IWebElement checkMonday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[3]//div[1]/div[1]/input[@name = 'Available']"));
+                    checkMonday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[3]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[3]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+
+                case "Tue":
+                    IWebElement checkTuesday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[4]//div[1]/div[1]/input[@name = 'Available']"));
+                    checkTuesday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[4]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[4]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+
+                case "Wed":
+                    IWebElement checkWednesday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[5]//div[1]/div[1]/input[@name = 'Available']"));
+                    checkWednesday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[5]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[5]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+
+                case "Thu":
+                    IWebElement checkThrusday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[6]//div[1]/div[1]/input[@name = 'Available']"));
+                    checkThrusday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[6]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[6]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+
+                case "Fri":
+                    IWebElement checkFriday = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[7]//div[1]/div[1]/input[@name = 'Available']"));
+                    checkFriday.Click();
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[7]//div[2]/input[@name = 'StartTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Starttime"));
+                    GlobalDefinitions.driver.FindElement(By.XPath("//div[@class='twelve wide column']//div[7]//div[3]/input[@name = 'EndTime']"))
+                        .SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Endtime"));
+                    Thread.Sleep(2000);
+                    break;
+            }
+            
+        }
+
+        public void ExchangeSkills()
+        {
+            if (GlobalDefinitions.ExcelLib.ReadData(2, "SkillTrade") == "Skill-Exchange")
+            {
+                SkillTradeOption_exchange.Click();
+                SkillExchange.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Skill-Exchange"));
+                SkillExchange.SendKeys(Keys.Enter);
+            }
+            else
+            {
+                SkillTradeOption_Credit.Click();
+                CreditAmount.Clear();
+                CreditAmount.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Credit"));
+            }
         }
 
         internal void EditShareSkill()
@@ -257,13 +339,21 @@ namespace MarsFramework.Pages
         {
             try
             {
-                String ActualMsg_ListingRemoval = GlobalDefinitions.driver.FindElement(By.XPath(
+                var ActualMsg_ListingRemoval = GlobalDefinitions.driver.FindElement(By.XPath(
                     "//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
-                String ExpectedMsg = "Service Listing Updated Successfully";
-                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
                 Console.WriteLine("Actual message is : " + ActualMsg_ListingRemoval);
-            }
-            catch (StaleElementReferenceException sere)
+                var ExpectedMsg = "Service Listing Updated Successfully";
+                //var NoMessage = string.Empty;
+                var nomessage = "";
+                Thread.Sleep(4000);
+                if (ExpectedMsg == "Selenium has been deleted" /*|| NoMessage == string.Empty*/ || nomessage == "")
+                {
+                    Console.WriteLine("Either condition from above is passed");
+                }
+                Assert.That(ActualMsg_ListingRemoval, Is.EqualTo(ExpectedMsg));
+                //Assert.AreEqual(ExpectedMsg, ActualMsg_ListingRemoval);
+                
+            }   catch (StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);
             }
