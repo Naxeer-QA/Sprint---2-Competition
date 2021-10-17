@@ -204,7 +204,8 @@ namespace MarsFramework.Pages
                     Console.WriteLine("Either condition from above is passed");
                 }
                 Assert.That(ActualMsg_ListingAdded, Is.EqualTo(ExpectedMsg));
-                //Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
+                
+                Assert.AreEqual(ExpectedMsg, ActualMsg_ListingAdded);
             }   catch(StaleElementReferenceException sere)
             {
                 Console.WriteLine("Exception occurred" + sere);

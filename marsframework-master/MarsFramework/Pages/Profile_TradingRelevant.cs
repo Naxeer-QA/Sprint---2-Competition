@@ -117,26 +117,27 @@ namespace MarsFramework.Pages
         public void ValidateMsgForAvailability()
         {
             try
-            {
-                var ActualMsg_Availability = GlobalDefinitions.driver.FindElement(By.XPath("//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
+
+            { 
+                var ActualMsg_Availability = GlobalDefinitions.driver.FindElement(By.XPath(
+                    "//div[@class ='ns-box ns-growl ns-effect-jelly ns-type-success ns-show']/div[@class = 'ns-box-inner']")).Text;
                 Console.WriteLine("Actual message is : " + ActualMsg_Availability);
-            var ExpectedMsg = "Availability updated";
-            //var NoMessage = string.Empty;
-            var nomessage = "";
-            Thread.Sleep(4000);
-            if (ExpectedMsg == "Availability updated" /*|| NoMessage == string.Empty*/ || nomessage == "")
-            {
-                Console.WriteLine("Either condition from above is passed");
-            }
-            Assert.That(ActualMsg_Availability, Is.EqualTo(ExpectedMsg));
-            //Assert.AreEqual(ExpectedMsg, ActualMsg_Availability);
-        }   catch(StaleElementReferenceException sere)
+                var ExpectedMsg = "Availability updated";
+                //var NoMessage = string.Empty;
+                var nomessage = "";
+                Thread.Sleep(4000);
+                if (ExpectedMsg == "Availability updated" /*|| NoMessage == string.Empty*/ || nomessage == "")
                 {
-                    Console.WriteLine("Exception occurred : " + sere);
+                    Console.WriteLine("Either condition from above is passed");
                 }
+                Assert.AreEqual(ExpectedMsg, ActualMsg_Availability);
+            }catch(StaleElementReferenceException sere)
+            {
+                Console.WriteLine("Exception occurred : " + sere);
+            }
 
 
-}
+        }
 
     }
 }
