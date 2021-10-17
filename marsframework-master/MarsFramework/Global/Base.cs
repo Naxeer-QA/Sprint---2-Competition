@@ -34,7 +34,6 @@ namespace MarsFramework.Global
 
             switch (Browser)
             {
-
                 case 1:
                     GlobalDefinitions.driver = new FirefoxDriver();
                     break;
@@ -46,14 +45,14 @@ namespace MarsFramework.Global
                     GlobalDefinitions.driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(45);
                     GlobalDefinitions.driver.Navigate().GoToUrl(baseUrl);
                     break;
-
             }
 
             #region Initialise Reports
 
             extent = new ExtentReports(ReportPath, false, DisplayOrder.NewestFirst);
             extent.LoadConfig(MarsResource.ReportXMLPath);
-
+            test = extent.StartTest("Extent Reports");
+            
             #endregion
 
             if (MarsResource.IsLogin == "true")
@@ -71,20 +70,18 @@ namespace MarsFramework.Global
 
         }
 
-
         [TearDown]
         public void TearDown()
         {
-            // Screenshot
-            String img = SaveScreenShotClass.SaveScreenshot(GlobalDefinitions.driver, "Screenshot");//AddScreenCapture(@"E:\Dropbox\VisualStudio\Projects\Beehive\TestReports\ScreenShots\");
-            //test.Log(LogStatus.Info, "Image example: " + img);
+            String img = SaveScreenShotClass.SaveScreenshot(GlobalDefinitions.driver, "Report");//AddScreenCapture(@"E:\Dropbox\VisualStudio\Projects\Beehive\TestReports\ScreenShots\");
+            test = new ExtentTest("", "");
+            test.Log(LogStatus.Info, "Image example: " + img);
             // end test. (Reports)
-            //extent.EndTest(test);
+            extent.EndTest(test);
             // calling Flush writes everything to the log file (Reports)
-            //extent.Flush();
-            // Close the driver :)            
+            extent.Flush();
             GlobalDefinitions.driver.Close();
-            //GlobalDefinitions.driver.Quit();
+            GlobalDefinitions.driver.Quit();
         }
         #endregion
 

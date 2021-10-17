@@ -1,6 +1,8 @@
 ﻿using MarsFramework.Global;
 using MarsFramework.Pages;
 using NUnit.Framework;
+using OpenQA.Selenium;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -10,7 +12,7 @@ namespace MarsFramework
     {
         //[TestFixture]
         [Category("Sprint1")]
-        //class User : Global.Base
+        //private class User : Global.Base
         //{
             //This is newly created solution tonight as the previous file producing issues
             //due to version misconfigurations.
@@ -23,7 +25,7 @@ namespace MarsFramework
                 Profile_TradingRelevant ptr = new Profile_TradingRelevant();
                 ptr.UpdateTradingContent();
                 bs.TearDown();
-        }
+            }
 
             [Test, Order(2)]
             public void TradeSkills()
@@ -33,7 +35,7 @@ namespace MarsFramework
                 ShareSkill sSkill = new ShareSkill();
                 sSkill.EnterShareSkill();
                 bs.TearDown();
-            }
+        }
 
             [Test, Order(3)]
             public void EditTradeSkills()
@@ -56,6 +58,34 @@ namespace MarsFramework
                 ml.DeleteListings();
                 bs.TearDown();
             }
+
+            [Test]
+            public void TableFinding()
+            {
+            Base bs = new Base();
+            bs.Inititalize();
+            ManageListings ml = new ManageListings();
+            ml.manageListingsLink.Click();
+            IWebElement table = GlobalDefinitions.driver.FindElement(By.XPath("//table [@class = 'ui striped table']"));
+            
+            if (table.Displayed)
+            {
+                IList<IWebElement> tableColumn = GlobalDefinitions.driver.FindElements(By.XPath("//table [@class = 'ui striped table']/thead/tr/th"));
+                IList<IWebElement> tableRows = GlobalDefinitions.driver.FindElements(By.XPath("//table[@class = 'ui striped table']/tbody/tr"));
+                var allRows = GlobalDefinitions.driver.FindElements(By.XPath(
+                        "//table[@class = 'ui striped table']/tbody/tr"));
+                int ListingsCount = tableRows.Count;
+                int columnCount = tableColumn.Count;
+                int selectRow = allRows.Count;
+                
+
+                System.Console.WriteLine("Total listings are : " + ListingsCount);
+                System.Console.WriteLine("Total columns are : " + columnCount);
+
+            }
+                bs.TearDown();
+
+        }
 
         }
     }
